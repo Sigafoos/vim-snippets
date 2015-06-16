@@ -1,7 +1,8 @@
-snipMate & UltiSnip Snippets
+snipMate & UltiSnip Snippets, dconley style
 ============================
+This is a personal fork of [honza/vim-snippets](https://github.com/honza/vim-snippets), with changes mostly of style (tabs instead of spaces, braces on next line, etc).
 
-[![Build Status](https://travis-ci.org/honza/vim-snippets.svg)](https://travis-ci.org/honza/vim-snippets)
+Original readme follows...
 
 This repository contains snippets files for various programming languages.
 
