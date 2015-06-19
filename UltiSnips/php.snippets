@@ -28,6 +28,10 @@ snippet def "def"
 define('${1:VARIABLE_NAME}', ${2:'definition'});$0
 endsnippet
 
+snippet eol "PHP_EOL"
+PHP_EOL
+endsnippet
+
 # ** loops **
 snippet do "do"
 do {
@@ -274,6 +278,10 @@ endsnippet
 # ** debugging ** #
 snippet log "log"
 error_log(var_export(${1}, true));$0
+endsnippet
+
+snippet vd "var dump"
+var_dump(${1});$0
 endsnippet
 
 snippet var "var export"
