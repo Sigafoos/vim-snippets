@@ -4,7 +4,7 @@ priority -50
 ## https://github.com/scrooloose/snipmate-snippets.git
 
 # ** variables ** #
-snippet array "array"
+snippet array "array" b
 $${1} = array('${2}' => ${3});$0
 endsnippet
 
@@ -12,20 +12,20 @@ snippet new "New class instance" b
 $${1} = new ${2:${1/\w+\s*/\u$0/}}($3);$0
 endsnippet
 
-snippet get "get"
+snippet get "get" w
 $_GET['${1}']$0
 endsnippet
 
-snippet post "post"
+snippet post "post" w
 $_POST['${1}']$0
 endsnippet
 
-snippet session "session"
+snippet session "session" w
 $_SESSION['${1}']$0
 endsnippet
 
-snippet def "def"
-define('${1:VARIABLE_NAME}', ${2:'definition'})$0
+snippet def "def" b
+define('${1:VARIABLE_NAME}', ${2:'definition'});$0
 endsnippet
 
 snippet eol "PHP_EOL"
@@ -33,7 +33,7 @@ PHP_EOL
 endsnippet
 
 # ** loops **
-snippet do "do"
+snippet do "do" b
 do
 {
 	$0
@@ -41,28 +41,28 @@ do
 while (${1});
 endsnippet
 
-snippet while "while"
+snippet while "while" b
 while (${1})
 {
 	$0
 }
 endsnippet
 
-snippet for "for"
+snippet for "for" b
 for ($${2:i} = 0; $$2 < ${1}; $$2${3:++})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
-snippet fore "foreach loop"
+snippet fore "foreach loop" b
 foreach ($${1:variable} as $${3:value})
 {
 	$0
 }
 endsnippet
 
-snippet forek "foreach with key"
+snippet forek "foreach with key" b
 foreach ($${1:variable} as $${2:key} => $${3:value})
 {
 	$0
@@ -70,28 +70,28 @@ foreach ($${1:variable} as $${2:key} => $${3:value})
 endsnippet
 
 # ** conditionals ** #
-snippet if "if"
+snippet if "if" b
 if (${1})
 {
 	$0
 }
 endsnippet
 
-snippet elif "elseif"
+snippet elif "elseif" b
 elseif (${1})
 {
 	$0
 }
 endsnippet
 
-snippet else "else"
+snippet else "else" b
 else
 {
 	$0
 }
 endsnippet
 
-snippet ife "if else"
+snippet ife "if else" b
 if (${1})
 {
 	${2}
@@ -103,37 +103,10 @@ else
 endsnippet
 
 snippet t "ternary"
-$${1} = (${2}) ? ${3} : ${4};$0
+${1} (${2}) ? ${3} : ${4};$0
 endsnippet
 
 # ** functions ** #
-snippet getter "PHP Class Getter" b
-/**
- * Getter for $1
- *
- * ${2:return string}
- */
-public function get${1/\w+\s*/\u$0/}()
-{
-	return $this->$1;
-}
-endsnippet
-
-snippet setter "PHP Class Setter" b
-/**
- * Setter for $1
- *
- * @param ${2:string} $$1
- * @return ${3}
- */
-public function set${1/\w+\s*/\u$0/}(${4:${2/(void|string|int|integer|double|float|object|boolear|null|mixed|number|resource)|(.*)/(?1::$2 )/}}$$1)
-{
-	$this->$1 = $$1;$5
-
-	${6:return $this;}
-}
-endsnippet
-
 global !p
 def camel_to_snake(camel):
 	return re.sub('(?!^)([A-Z]+)', r'_\1', camel).lower()
@@ -144,15 +117,49 @@ def snake_to_camel(snake):
 	return snake[0].lower() + string.capwords(snake, sep='_').replace('_', '')[1:] if snake else snake
 
 def uc_first_snake_to_camel(snake):
-	 camel = snake_to_camel(snake)
-	 return camel[0:1].upper() + camel[1:]
+	camel = snake_to_camel(snake)
+	return camel[0:1].upper() + camel[1:]
+
+def generate_db_params(params = ''):
+	if (params == ''):
+		return ''
+	db = '\n *\n'
+	for param in params.split(', '):
+		db = db + ' * @param string ' + param + '\n'
+	return db[:-1]
 endglobal
+
+snippet getter "PHP Class Getter" b
+/**
+ * Getter for $$1
+ *
+ * @return ${2:string}
+ */
+public function get`!p snip.rv=uc_first_snake_to_camel(t[1])`()
+{
+	return $this->${1};
+}
+endsnippet
+
+snippet setter "PHP Class Setter" b
+/**
+ * Setter for $$1
+ *
+ * @param ${2:string} $`!p snip.rv = re.sub('^_', '', t[1])`
+ * @return ${3:boolean true on succes}
+ */
+public function set`!p snip.rv=uc_first_snake_to_camel(t[1])`($`!p snip.rv = re.sub('^_', '', t[1])`)
+{
+	$this->${1} = $`!p snip.rv = re.sub('^_', '', t[1])`;
+	${4:return true;}
+}$0
+endsnippet
 
 snippet gs "PHP Class Getter Setter" b
 /**
- * Getter for $1
+ * Getter for $$1
  *
- * return ${2:string}
+ * @return ${2:string}
  */
 public function get`!p snip.rv=uc_first_snake_to_camel(t[1])`()
 {
@@ -160,103 +167,113 @@ public function get`!p snip.rv=uc_first_snake_to_camel(t[1])`()
 }
 
 /**
- * Setter for $1
+ * Setter for $$1
  *
  * @param $2 $`!p snip.rv = re.sub('^_', '', t[1])`
  * @return ${3:boolean true on success}
  */
-public function set`!p snip.rv=uc_first_snake_to_camel(t[1])`(${5:${2/(void|string|int|integer|double|float|object|boolear|null|mixed|number|resource)|(.*)/(?1::$2 )/}}$`!p snip.rv = re.sub('^_', '', t[1])`)
+public function set`!p snip.rv=uc_first_snake_to_camel(t[1])`($`!p snip.rv = re.sub('^_', '', t[1])`)
 {
 	$this->$1 = $`!p snip.rv = re.sub('^_', '', t[1])`;
 	${7:return true;}
-}
-$0
+}$0
 endsnippet
 
 snippet pub "Public function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+	snip.rv = '\n * @return ';
+`
  */
 public function ${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet pro "Protected function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
  */
 protected function ${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet pri "Private function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
  */
-private function ${1:name}(${2})
+private function _${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet pubs "Public static function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
+ * @static
  */
 public static function ${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet pros "Protected static function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
+ * @static
  */
 protected static function ${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet pris "Private static function" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
+ * @static
  */
-private static function ${1:name}(${2})
+private static function _${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
 snippet fu "Function snip" b
 /**
- * ${3}
- *
- * @param ${4:string} $2 ${5}
+ * ${3}`!p snip.rv = generate_db_params(t[2])``!p
+if (t[4].find('return') != -1):
+ snip.rv = '\n * @return ';
+`
  */
 function ${1:name}(${2})
 {
-	$0
-}
+	${4}
+}$0
 endsnippet
 
+# untested
 snippet construct "__construct()" b
 /**
  * @param $2mixed ${1/, /\n	 * \@param mixed /g}
@@ -267,7 +284,7 @@ public function __construct(${1})
 $0
 endsnippet
 
-# ** docblocks ** #
+# ** docblocks (all untested) ** #
 snippet doc_f "function with docblock"
 /**
  * $2
@@ -291,39 +308,40 @@ interface ${1:someClass}
 endsnippet
 
 # ** debugging ** #
-snippet log "log"
+snippet log "log" b
 error_log(var_export(${1}, true));$0
 endsnippet
 
-snippet vd "var dump"
+snippet vd "var dump" b
 var_dump(${1});$0
 endsnippet
 
-snippet var "var export"
+snippet var "var export" b
 var_export(${1});$0
 endsnippet
 
-snippet ve "Dumb debug helper in HTML"
-	echo '<pre>' . var_export($1, true) . '</pre>';$0
+snippet ve "Dumb debug helper in HTML" b
+echo '<pre>' . var_export($1, true) . '</pre>';$0
 endsnippet
 
 # ** misc ** #
-snippet inc "include"
+snippet inc "include" b
 include '${1}';$0
 endsnippet
 
-snippet inco "include once"
+snippet inco "include once" b
 include_once '${1}';$0
 endsnippet
 
-snippet req "require"
+snippet req "require" b
 require '${1}';${2}
 endsnippet
 
-snippet reqo "require once"
+snippet reqo "require once" b
 require_once '${1}';${2}
 endsnippet
 
+# untested
 snippet ns "namespace declaration" b
 namespace ${1:`!p
 abspath = os.path.abspath(path)
@@ -333,7 +351,7 @@ if m:
 `};
 endsnippet
 
-# I don't think this is how we do it?
+# untested
 snippet class "Class declaration template" b
 <?php
 
@@ -353,6 +371,7 @@ class $1
 }
 endsnippet
 
+# untested
 snippet interface "Interface declaration template" b
 <?php
 
