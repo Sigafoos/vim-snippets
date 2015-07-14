@@ -318,15 +318,15 @@ snippet log "log" b
 error_log(var_export(${1}, true));$0
 endsnippet
 
-snippet vd "var dump" b
+snippet vd "var dump" w
 var_dump(${1});$0
 endsnippet
 
-snippet var "var export" b
+snippet var "var export" w
 var_export(${1});$0
 endsnippet
 
-snippet ve "Dumb debug helper in HTML" b
+snippet ve "Dumb debug helper in HTML" w
 echo '<pre>' . var_export($1, true) . '</pre>';$0
 endsnippet
 
